@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文档管理后台</title>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+    <link rel="stylesheet" href="../layui/css/test1.css">
+    <script type="text/javascript" src="../layui/layui.js"></script>
+</head>
+
+<!--    <ul class="layui-nav layui-nav-tree" lay-filter="test">-->
+<!--        &lt;!&ndash; 侧边导航: <ul class="layui-nav layui-nav-tree layui-nav-side"> &ndash;&gt;-->
+<!--        <li class="layui-nav-item layui-nav-itemed">-->
+<!--            <a href="javascript:;">默认展开</a>-->
+<!--            <dl class="layui-nav-child">-->
+<!--                <dd><a href="javascript:;">选项1</a></dd>-->
+<!--                <dd><a href="javascript:;">选项2</a></dd>-->
+<!--                <dd><a href="">跳转</a></dd>-->
+<!--            </dl>-->
+<!--        </li>-->
+<!--        <li class="layui-nav-item">-->
+<!--            <a href="javascript:;">解决方案</a>-->
+<!--            <dl class="layui-nav-child">-->
+<!--                <dd><a href="">移动模块</a></dd>-->
+<!--                <dd><a href="">后台模版</a></dd>-->
+<!--                <dd><a href="">电商平台</a></dd>-->
+<!--            </dl>-->
+<!--        </li>-->
+<!--        <li class="layui-nav-item"><a href="">产品</a></li>-->
+<!--        <li class="layui-nav-item"><a href="">大数据</a></li>-->
+<!--    </ul>-->
+<!--    <script>-->
+<!--        //注意：导航 依赖 element 模块，否则无法进行功能性操作-->
+<!--        layui.use('element', function(){-->
+<!--            var element = layui.element;-->
+
+<!--            //…-->
+<!--        });-->
+<!--    </script>-->
+
+<body>
+
+<table id="demo" lay-filter="test"></table>
+
+<!--<script src="/layui/layui.js"></script>-->
+<script>
+	layui.use('table', function(){
+		var table = layui.table;
+		//第一个实例
+		table.render({
+			elem: '#demo'
+			,height: 312
+			,url: '/demo/table/user/' //数据接口
+			,page: true //开启分页
+			,cols: [[ //表头
+				{field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
+				,{field: 'username', title: '用户名', width:80}
+				,{field: 'sex', title: '性别', width:80, sort: true}
+				,{field: 'city', title: '城市', width:80}
+				,{field: 'sign', title: '签名', width: 177}
+				,{field: 'experience', title: '积分', width: 80, sort: true}
+				,{field: 'score', title: '评分', width: 80, sort: true}
+				,{field: 'classify', title: '职业', width: 80}
+				,{field: 'wealth', title: '财富', width: 135, sort: true}
+			]]
+		});
+
+	});
+</script>
+</body>
+
+
+</html>

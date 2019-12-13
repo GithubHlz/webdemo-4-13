@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.webdemo413.mapper.userMapper">
+
+    <resultMap id="menu1" type="Menu">
+        <result property="menu" column="MENU" />
+        <result property="sonMenu" column="SONMENU"/>
+        <result property="link" column="LINK" />
+        <result property="menuid" column="MENUID" />
+    </resultMap>
+    <select id="menu" resultMap="menu1" parameterType="Admin">
+        SELECT T1.PERMISSIONSID MENUID,T1.MENU MENU,T2.PERMISSIONSID SONID,T2.MENU SONMENU,T2.LINK LINK FROM
+(SELECT
+pe.PERMISSIONSID,
+pe.MENU
+FROM admin ad,admin_role ar,role,role_permissions rp,permissions pe
+WHERE ad.admin=#{admin} AND ar.ADMIN=ad.admin AND ar.roleid=role.roleid AND role.roleid=rp.roleid AND rp.PERMISSIONSID=pe.PERMISSIONSID)T1,
+(SELECT
+pe.PERMISSIONSID,
+pe.MENU,
+pe.SONID,
+pe.LINK
+FROM admin ad,admin_role ar,role,role_permissions rp,permissions pe
+WHERE ad.admin=#{admin} AND ar.ADMIN=ad.admin AND ar.roleid=role.roleid AND role.roleid=rp.roleid AND rp.PERMISSIONSID=pe.PERMISSIONSID) T2
+WHERE
+T1.PERMISSIONSID=T2.SONID
+    </select>
+<!--    <select id="menu" resultMap="menu1" parameterType="Admin">-->
+
+<!--        SELECT-->
+<!--        secondary.menu_name AS sonMenu,-->
+<!--        firstlevel.menu_name AS menu,-->
+<!--        secondary.link AS link,-->
+<!--        firstlevel.firstid AS menuid-->
+<!--        FROM admin,admin_first,firstLevel,first_second,secondary-->
+<!--        WHERE admin.ADMIN=1 AND admin.ADMIN=admin_first.ADMIN AND admin_first.firstid=firstLevel.firstid AND first_second.ADMIN=admin.ADMIN AND firstLevel.firstid=first_second.firstid AND first_second.secondid=secondary.secondid-->
+<!--    </select>-->
+
+    <select id="tableQuery" resultType="userDate">
+        SELECT * FROM userdate
+        <if test="username != null and username != ''">
+            where USERNAME like '%${username}%'
+        </if>
+        LIMIT #{beginNumber},#{endNumber}
+    </select>
+
+    <select id="count" resultType="java.lang.Integer">
+        SELECT COUNT(userdate.USERID) FROM userdate WHERE 1=1
+    </select>
+
+    <insert id="adduser" parameterType="userDate">
+        INSERT INTO userdate(USERNAME,REGISTEREDTIME,INTEGRAL,UPLOADDOCUMENT,DOWNLOADDOCUMENT,USERSTATE) VALUES (#{USERNAME},#{REGISTEREDTIME},#{INTEGRAL},#{UPLOADDOCUMENT},#{DOWNLOADDOCUMENT},#{USERSTATE})
+   </insert>
+
+    <update id="change" parameterType="userDate">
+        UPDATE userdate SET REGISTEREDTIME=#{REGISTEREDTIME},INTEGRAL=#{INTEGRAL},UPLOADDOCUMENT=#{UPLOADDOCUMENT},DOWNLOADDOCUMENT=#{DOWNLOADDOCUMENT},USERSTATE=#{USERSTATE} WHERE USERNAME=#{USERNAME}
+    </update>
+
+    <delete id="deleteUser" parameterType="userDate">
+        DELETE FROM userdate WHERE userdate.USERNAME=#{USERNAME}
+    </delete>
+
+    <select id="authority" parameterType="Admin" resultMap="authority1">
+        SELECT T1.PERMISSIONSID menuid,T1.MENU menu,T2.PERMISSIONSID sonid,T2.MENU sonmenu,T2.LINK link FROM
+        (SELECT
+        pe.PERMISSIONSID,
+        pe.MENU
+        FROM admin ad,admin_role ar,role,role_permissions rp,permissions pe
+        WHERE ad.ADMIN=#{admin} AND ad.ADMIN=ar.ADMIN AND ar.roleid=role.roleid AND rp.PERMISSIONSID=pe.PERMISSIONSID) T1,
+        (SELECT
+        pe.PERMISSIONSID,
+        pe.MENU,
+        pe.SONID,
+        pe.LINK
+        FROM admin ad,admin_role ar,role,role_permissions rp,permissions pe
+        WHERE ad.ADMIN=#{admin} AND ad.ADMIN=ar.ADMIN AND ar.roleid=role.roleid AND rp.PERMISSIONSID=pe.PERMISSIONSID) T2
+        WHERE
+        T1.PERMISSIONSID=T2.SONID
+    </select>
+    <resultMap id="authority1" type="authority">
+        <result property="id" column="menuid" />
+        <result property="title" column="menu" />
+        <collection property="children" ofType="authority">
+            <result property="id" column="sonid" />
+            <result property="title" column="sonmenu" />
+        </collection>
+    </resultMap>
+<!--    <select id="authority" parameterType="userDate" resultMap="authority1">-->
+<!--        SELECT-->
+<!--        firstlevel.firstid AS menuid,-->
+<!--        firstlevel.menu_name AS menu,-->
+<!--        secondary.secondid AS sonid,-->
+<!--        secondary.menu_name AS sonmenu-->
+<!--        FROM firstlevel,first_second,secondary-->
+<!--        WHERE firstlevel.firstid=first_second.firstid AND first_second.secondid=secondary.secondid AND first_second.ADMIN='3'-->
+<!--    </select>-->
+<!--    <resultMap id="authority1" type="authority">-->
+<!--        <result property="id" column="menuid" />-->
+<!--        <result property="title" column="menu" />-->
+<!--        <collection property="children" ofType="authority">-->
+<!--            <result property="id" column="sonid" />-->
+<!--            <result property="title" column="sonmenu" />-->
+<!--        </collection>-->
+<!--    </resultMap>-->
+
+    <insert id="insertmenu1">
+        insert into admin_first(ADMIN,firstid) VALUES (#{ADMIN},#{firstid})
+    </insert>
+
+    <insert id="insertmenu2">
+        insert into first_second(firstid,secondid,ADMIN) VALUES (#{firstid},#{secondid},#{ADMIN})
+    </insert>
+
+    <insert id="insertmenu3">
+        INSERT INTO role_permissions(role_permissions.PERMISSIONSID,role_permissions.roleid) VALUES(#{PERMISSIONSID},#{roleid})
+    </insert>
+
+    <delete id="clearmenu">
+        DELETE FROM role_permissions WHERE role_permissions.roleid=#{roleid}
+    </delete>
+
+    <select id="roletable" resultType="Role">
+        SELECT role.roleid,role.rolename FROM role
+    </select>
+
+
+    
+    <insert id="registered" parameterType="Admin">
+        INSERT INTO admin(admin.ADMIN,admin.ADMIN_NAME,admin.ADMIN_PASSWOED,admin.position,admin.profession) VALUES (#{admin},#{adminName},#{password},#{position},#{profession})
+    </insert>
+    
+    <insert id="addrelation" parameterType="Admin">
+        INSERT INTO admin_role(admin_role.ADMIN,admin_role.roleid) VALUES (#{admin},3)
+    </insert>
+    <insert id="UploadFile" parameterType="UploadFile">
+        INSERT INTO file(file.title,file.admin_name,file.upload_date,file.down_integral,file.filetype)VALUES(#{name},#{adminName},#{upload_date},#{down_integral},#{fileType})
+    </insert>
+
+
+    <select id="fileQuery" resultMap="file1">
+        SELECT * FROM file
+        <if test="name != null and name != ''">
+            where admin_name like '%${name}%'
+        </if>
+        LIMIT #{beginNumber},#{endNumber}
+    </select>
+    <resultMap id="file1" type="UploadFile">
+        <result property="name" column="title" />
+        <result property="adminName" column="admin_name"/>
+        <result property="upload_date" column="upload_date" />
+        <result property="down_integral" column="down_integral" />
+        <result property="fileType" column="filetype" />
+    </resultMap>
+
+
+    <select id="filecount" resultType="java.lang.Integer">
+        SELECT COUNT(file.fileid) FROM file WHERE 1=1
+    </select>
+
+</mapper>
